@@ -127,7 +127,7 @@ app.post('/login', (req, res) => {
         console.log('Logged in!');
         res.redirect('/');
         //TODO How do we redirect user to personal page?
-          //Sessions.isLoggedIn?
+        //Sessions.isLoggedIn?
       } else {
         res.redirect('/login');
       }

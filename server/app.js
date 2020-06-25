@@ -5,6 +5,7 @@ const partials = require('express-partials');
 const bodyParser = require('body-parser');
 const Auth = require('./middleware/auth');
 const models = require('./models');
+const cookie = require('./middleware/cookieParser'); //TEST DELETE THIS
 
 const app = express();
 
@@ -105,7 +106,16 @@ app.post('/signup', (req, res, next) => {
     });
 });
 
+//**************************** */
+//TEST DELETE THIS
+//// parseCookies
 
+app.get('/testcookie', (req, res) => {
+  let test = cookie(req, res);
+  console.log('TEST****: ', test);
+});
+
+//**************************** */
 
 app.get('/login', (req, res) => {
   res.render('login');

@@ -92,7 +92,7 @@ app.post('/signup', (req, res, next) => {
       if (!user) {
         return models.Users.create({ username, password })
           .then((user) => {
-            res.status(200).send('Written to database!');
+            res.redirect('/');
             //models.Sessions.create();
           })
           .catch((err) => {
@@ -106,17 +106,6 @@ app.post('/signup', (req, res, next) => {
     });
 });
 
-//**************************** */
-//TEST DELETE THIS
-//// parseCookies
-
-app.get('/testcookie', (req, res) => {
-  let test = cookie(req, res);
-  console.log('TEST****: ', test);
-});
-
-//**************************** */
-
 app.get('/login', (req, res) => {
   res.render('login');
 });
@@ -126,24 +115,19 @@ app.post('/login', (req, res) => {
   let password = req.body.password;
   return models.Users.get({ username })
     .then((user) => {
-      if (!user) {
+      if (user) {
+        if (models.Users.compare(password, user.password, user.salt)) {
+          res.redirect('/');
+        } else {
+          //returns boolean true if passwords match.
+         //if user doesn't exist, skip over then block below
         res.redirect('/login');
-      } else {
-        return models.Users.compare(password, user.password, user.salt); //returns boolean true if passwords match.
-      }
-    })
-    .then((authenticated) => {
-      if (authenticated) {
-        console.log('Logged in!');
-        res.redirect('/');
-        //TODO How do we redirect user to personal page?
-        //Sessions.isLoggedIn?
+        }
       } else {
         res.redirect('/login');
       }
     });
 });
-
 
 /************************************************************/
 // Handle the code parameter route last - if all other routes fail

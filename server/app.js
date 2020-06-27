@@ -92,7 +92,7 @@ app.post('/signup', (req, res, next) => {
       if (!user) {
         return models.Users.create({ username, password })
           .then((user) => {
-            res.status(200).send('Written to database!');
+            res.redirect('/')
             //models.Sessions.create();
           })
           .catch((err) => {

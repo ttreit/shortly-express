@@ -5,7 +5,7 @@ const partials = require('express-partials');
 const bodyParser = require('body-parser');
 const Auth = require('./middleware/auth');
 const models = require('./models');
-const cookie = require('./middleware/cookieParser'); //TEST DELETE THIS
+const cookie = require('./middleware/cookieParser');
 
 const app = express();
 
@@ -15,11 +15,11 @@ app.use(partials());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
-
-
+app.use(cookie);
+app.use(Auth.createSession);
 
 app.get('/',
-  (req, res) => {
+  (req, res) => { //middleware func
     res.render('index');
   });
 
@@ -84,19 +84,6 @@ app.get('/signup', (req, res) => {
   res.render('signup');
 });
 
-//**************************** */
-//TEST DELETE THIS
-//// parseCookies
-
-app.get('/testcookie', (req, res, next) => {
-  Auth.createSession(req, res, next);
-
-  //module.exports.createSession
-
-});
-
-//**************************** */
-
 app.post('/signup', (req, res, next) => {
   let username = req.body.username;
   let password = req.body.password;
@@ -105,7 +92,7 @@ app.post('/signup', (req, res, next) => {
       if (!user) {
         return models.Users.create({ username, password })
           .then((user) => {
-            res.redirect('/');
+            res.status(200).send('Written to database!');
             //models.Sessions.create();
           })
           .catch((err) => {
@@ -119,6 +106,17 @@ app.post('/signup', (req, res, next) => {
     });
 });
 
+//**************************** */
+//TEST DELETE THIS
+//// parseCookies
+
+// app.get('/testcookie', (req, res) => {
+//   Auth.createSession(req, res);
+//   res.sendStatus(200);
+// });
+
+//**************************** */
+
 app.get('/login', (req, res) => {
   res.render('login');
 });
@@ -128,19 +126,24 @@ app.post('/login', (req, res) => {
   let password = req.body.password;
   return models.Users.get({ username })
     .then((user) => {
-      if (user) {
-        if (models.Users.compare(password, user.password, user.salt)) {
-          res.redirect('/');
-        } else {
-          //returns boolean true if passwords match.
-          //if user doesn't exist, skip over then block below
-          res.redirect('/login');
-        }
+      if (!user) {
+        res.redirect('/login');
+      } else {
+        return models.Users.compare(password, user.password, user.salt); //returns boolean true if passwords match.
+      }
+    })
+    .then((authenticated) => {
+      if (authenticated) {
+        console.log('Logged in!');
+        res.redirect('/');
+        //TODO How do we redirect user to personal page?
+        //Sessions.isLoggedIn?
       } else {
         res.redirect('/login');
       }
     });
 });
+
 
 /************************************************************/
 // Handle the code parameter route last - if all other routes fail

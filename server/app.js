@@ -84,6 +84,19 @@ app.get('/signup', (req, res) => {
   res.render('signup');
 });
 
+//**************************** */
+//TEST DELETE THIS
+//// parseCookies
+
+app.get('/testcookie', (req, res, next) => {
+  Auth.createSession(req, res, next);
+
+  //module.exports.createSession
+
+});
+
+//**************************** */
+
 app.post('/signup', (req, res, next) => {
   let username = req.body.username;
   let password = req.body.password;
@@ -120,8 +133,8 @@ app.post('/login', (req, res) => {
           res.redirect('/');
         } else {
           //returns boolean true if passwords match.
-         //if user doesn't exist, skip over then block below
-        res.redirect('/login');
+          //if user doesn't exist, skip over then block below
+          res.redirect('/login');
         }
       } else {
         res.redirect('/login');

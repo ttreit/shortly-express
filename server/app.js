@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const Auth = require('./middleware/auth');
 const models = require('./models');
 const cookie = require('./middleware/cookieParser');
+const logger = require('./middleware/logger');
 
 const app = express();
 
@@ -15,8 +16,11 @@ app.use(partials());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
+
+//middleware
 app.use(cookie);
 app.use(Auth.createSession);
+app.use(logger);
 
 app.get('/',
   (req, res) => { //middleware func

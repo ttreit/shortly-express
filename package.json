@@ -28,6 +28,7 @@
     "mysql": "^2.12.0",
     "node-mocks-http": "^1.6.1",
     "request": "^2.34.0",
+    "serve-favicon": "^2.5.0",
     "underscore": "^1.10.2"
   },
   "devDependencies": {

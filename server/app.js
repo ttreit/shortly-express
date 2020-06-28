@@ -7,6 +7,8 @@ const Auth = require('./middleware/auth');
 const models = require('./models');
 const cookie = require('./middleware/cookieParser');
 const logger = require('./middleware/logger');
+const time = require('./middleware/timeStamp');
+const favicon = require('serve-favicon');
 
 const app = express();
 
@@ -16,10 +18,12 @@ app.use(partials());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
+app.use(favicon(__dirname + '/favicon.ico'));
 
 //middleware
 app.use(cookie);
 app.use(Auth.createSession);
+app.use(time);
 app.use(logger);
 
 app.get('/',

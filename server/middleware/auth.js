@@ -1,31 +1,80 @@
 const models = require('../models');
 const Promise = require('bluebird');
+const session = require('../models/session')
 
 module.exports.createSession = (req, res, next) => {
-  //Find out if there's a hash in the cookie
-    //Check if req.cookies.shortlyId exists
-    if (req.cookies.shortlyId) {
-      //if it exists set sessionHash to shortlyId value
-      let hash = req.cookies.shortlyId;
-      // get hash from models.Sessions (returns promise)
-      models.Sessions.get({ hash })
-        .then((session) => {
-          if (session) {
-            req.session = session;
-            let test = res.cookie('shortlyId', req.session.hash);
-            console.log(test);
-          }
-          //if session exists get userId
-        })
-      }
+  let cookies = req.cookies;  //parsed cookie
+  let sessionId;
+  let sessionHash;
+  console.log('COOKIES: ', cookies);
+  console.log('COOKIES.KEYS ', Object.keys(cookies))
+  if (Object.keys(cookies).length === 0) {
+    console.log('No cookie for you!');
+  } else {
+    console.log('Cookies! Cookies! Cookies!')
+  }
+  for (let key in cookies) {
+    sessionId = key;
+    sessionHash = cookies[key];
+    let sessionObj = {
+      hash: sessionHash,
+      userId: sessionId
+    }
+    session.get(sessionObj)
+      .then(() => {
 
-        //.then(session)
-          //req.session = session
-          //res.cookie('shortlyId', req.session.hash)
-          //set id to session.userId
-          //if id exists then set req.session.userId to id
-          //get id from users table (returns promise)
-            //then(userData)
+      })
+  }
+
+  //create get options object keys are columns, values to be matched
+  // let sessionObj = {
+  //   hash: sessionHash,
+  //   userId: userId
+  // };
+
+
+
+
+
+
+
+
+
+
+  next();
+
+
+
+
+
+
+};
+
+
+  // //Find out if there's a hash in the cookie
+  //   //Check if req.cookies.shortlyId exists
+  //   if (req.cookies.shortlyId) {
+  //     //if it exists set sessionHash to shortlyId value
+  //     let hash = req.cookies.shortlyId;
+  //     // get hash from models.Sessions (returns promise)
+  //     models.Sessions.get({ hash })
+  //       .then((session) => {
+  //         if (session) {
+  //           req.session = session;
+  //           let test = res.cookie('shortlyId', req.session.hash);
+  //           console.log(test);
+  //         }
+  //         //if session exists get userId
+  //       })
+  //     }
+
+  //       //.then(session)
+  //         //req.session = session
+  //         //res.cookie('shortlyId', req.session.hash)
+  //         //set id to session.userId
+  //         //if id exists then set req.session.userId to id
+  //         //get id from users table (returns promise)
+  //           //then(userData)
               //set req.session.user to object with k/v pair username: userData.username
 
     //if it doesnt exist create a session (models.sessions.create())
@@ -34,14 +83,12 @@ module.exports.createSession = (req, res, next) => {
 
 
 
-  next();
+
 
   //get parsed cookie
 
   //check if there is a session hash - if no, or if invalid create hash, send to server in req and res objects
   //if valid hash - send to server in req and res objects
-};
-
 //NOTES FROM TEST
 //initializes a new session when there are no cookies on the request
   //req.cookies.shortlyId
